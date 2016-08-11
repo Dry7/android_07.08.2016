@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.dry7.a07082016.DashboardActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:background="#b26a6a"
+        android:id="@+id/menuTopLayout">
+        <fragment
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:name="com.dry7.a07082016.fragments.MenuTopFragment">
+        </fragment>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/menuTopLayout"
+        android:layout_alignStart="@+id/menuTopLayout"
+        android:background="@color/colorPrimaryDark"
+        android:gravity="left"
+        android:id="@+id/productsLayout"
+        android:layout_toStartOf="@+id/cartLayout">
+        <fragment
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:name="com.dry7.a07082016.fragments.ProductsFragment">
+        </fragment>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
+        android:layout_alignTop="@+id/productsLayout"
+        android:layout_alignEnd="@+id/menuTopLayout"
+        android:gravity="right"
+        android:background="#2c709d"
+        android:id="@+id/cartLayout">
+        <fragment
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:name="com.dry7.a07082016.fragments.CartFragment">
+        </fragment>
+    </RelativeLayout>
+
+</RelativeLayout>
