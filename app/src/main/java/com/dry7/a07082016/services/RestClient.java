@@ -6,6 +6,7 @@ import android.net.NetworkInfo;
 
 import com.dry7.a07082016.models.Category;
 import com.dry7.a07082016.models.Product;
+import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
@@ -43,8 +44,8 @@ public class RestClient {
     {
         RxJavaCallAdapterFactory rxAdapter = RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io());
         OkHttpClient client = new OkHttpClient.Builder()
-                //.addNetworkInterceptor(new StethoInterceptor())
-        .build();
+                .addNetworkInterceptor(new StethoInterceptor())
+                .build();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://api.gifts48.ru/")
                 .client(client)
