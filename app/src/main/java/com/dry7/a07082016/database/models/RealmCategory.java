@@ -1,8 +1,10 @@
 package com.dry7.a07082016.database.models;
 
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
-public class CategoryRealm extends RealmObject {
+public class RealmCategory extends RealmObject {
+    @PrimaryKey
     private String name;
 
     public String getName() {

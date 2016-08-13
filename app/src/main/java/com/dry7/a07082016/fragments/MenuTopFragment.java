@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.dry7.a07082016.DashboardActivity;
 import com.dry7.a07082016.MenuActivity;
 import com.dry7.a07082016.R;
+import com.dry7.a07082016.database.models.RealmCategory;
 import com.dry7.a07082016.models.Category;
 import com.dry7.a07082016.services.RestClient;
 
@@ -23,7 +24,8 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import rx.Subscriber;
+import io.realm.Realm;
+import io.realm.RealmObject;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 
@@ -62,7 +64,22 @@ public class MenuTopFragment extends Fragment {
         mAdapter = new MenuTopAdapter(items);
         mRecyclerView.setAdapter(mAdapter);
 
-        this.subscription = RestClient.getInstance().categoriesList().observeOn(AndroidSchedulers.mainThread()).subscribe(categories -> {
+        this.subscription = RestClient.getInstance().categoriesList().map(categories -> {
+            Log.d("Coffee", "Map");
+            Realm realm = Realm.getDefaultInstance();
+            realm.beginTransaction();
+
+            realm.delete(RealmCategory.class);
+            for (Category category : categories) {
+                RealmCategory realmCategory = realm.createObject(RealmCategory.class);
+                realmCategory.setName(category.getName());
+
+                realm.copyToRealmOrUpdate(realmCategory);
+            }
+            realm.commitTransaction();
+            realm.close();
+            return categories;
+        }).observeOn(AndroidSchedulers.mainThread()).subscribe(categories -> {
                 Log.d("Coffee", "Categories onNext");
                 ArrayList<String> items2 = new ArrayList<String>();
                 items2.add("Home");

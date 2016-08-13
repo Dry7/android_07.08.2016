@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import com.dry7.a07082016.database.models.RealmCategory;
 import com.dry7.a07082016.models.Category;
 import com.dry7.a07082016.models.Product;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
@@ -14,6 +15,9 @@ import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import io.realm.RealmObject;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -29,7 +33,7 @@ public class RestClient {
     private static Gson realmGson = new GsonBuilder().setExclusionStrategies(new ExclusionStrategy() {
         @Override
         public boolean shouldSkipField(FieldAttributes f) {
-            return f.getDeclaringClass().equals("");
+            return f.getDeclaringClass().equals(RealmObject.class);
         }
 
         @Override
@@ -53,6 +57,13 @@ public class RestClient {
                 .addCallAdapterFactory(rxAdapter).build();
 
         return retrofit.create(WebServiceInterface.class);
+    }
+
+    public static Observable categoriesListRealm()
+    {
+        Realm realm = Realm.getDefaultInstance();
+
+        return realm.where(RealmCategory.class).findAllAsync().asObservable().flatMap(persons -> { return Observable.from(persons); });
     }
 
     /**
