@@ -11,21 +11,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dry7.a07082016.DashboardActivity;
 import com.dry7.a07082016.MenuActivity;
 import com.dry7.a07082016.R;
-import com.dry7.a07082016.database.models.RealmCategory;
 import com.dry7.a07082016.models.Category;
 import com.dry7.a07082016.services.RestClient;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.realm.Realm;
-import io.realm.RealmObject;
+import io.realm.RealmResults;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 
@@ -36,10 +38,12 @@ import rx.android.schedulers.AndroidSchedulers;
 public class MenuTopFragment extends Fragment {
 
     String[] categories = {"Coffee", "Beverages"};
+    ArrayList<String> before = new ArrayList<String>(){{ add("Home"); }};
+    ArrayList<String> after  = new ArrayList<String>(){{ add("Menu"); }};
 
     @BindView(R.id.menuTopList) RecyclerView mRecyclerView;
 
-    private MenuTopAdapter mAdapter;
+    private MenuTopRealmAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
     private Subscription subscription;
@@ -57,42 +61,45 @@ public class MenuTopFragment extends Fragment {
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getContext(), LinearLayoutManager.HORIZONTAL, false));
 
-        ArrayList<String> items = new ArrayList<String>();
-
-        items.add("Home");
-        items.add("Menu");
-        mAdapter = new MenuTopAdapter(items);
-        mRecyclerView.setAdapter(mAdapter);
-
-        this.subscription = RestClient.getInstance().categoriesList().map(categories -> {
-            Log.d("Coffee", "Map");
-            Realm realm = Realm.getDefaultInstance();
-            realm.beginTransaction();
-
-            realm.delete(RealmCategory.class);
-            for (Category category : categories) {
-                RealmCategory realmCategory = realm.createObject(RealmCategory.class);
-                realmCategory.setName(category.getName());
-
-                realm.copyToRealmOrUpdate(realmCategory);
+        if(getContext().getClass().equals(DashboardActivity.class)) {
+            try (Realm realmInstance = Realm.getDefaultInstance()) {
+                realmInstance.where(Category.class).findAllAsync().asObservable().subscribe(categories -> {
+                    mAdapter = new MenuTopRealmAdapter(this.before, categories, this.after);
+                    mRecyclerView.setAdapter(mAdapter);
+                    Log.d("Coffee", "Subscribe");
+                });
             }
-            realm.commitTransaction();
-            realm.close();
-            return categories;
-        }).observeOn(AndroidSchedulers.mainThread()).subscribe(categories -> {
-                Log.d("Coffee", "Categories onNext");
-                ArrayList<String> items2 = new ArrayList<String>();
-                items2.add("Home");
-                if(getContext().getClass().equals(DashboardActivity.class)) {
-                    for (Category category : categories) {
-                        Log.d("Coffee", category.getName());
-                        items2.add(category.getName());
-                    }
-                }
-                items2.add("Menu");
-                mAdapter.setDataset(items2);
-                mAdapter.notifyDataSetChanged();
-        });
+        } else {
+            mAdapter = new MenuTopRealmAdapter(this.before, null, this.after);
+            mRecyclerView.setAdapter(mAdapter);
+        }
+
+//        this.subscription = RestClient.getInstance().categoriesList().map(categories -> {
+//            Log.d("Coffee", "Map");
+//            try (Realm realmInstance = Realm.getDefaultInstance()){
+//                realmInstance.executeTransaction(transaction -> {
+//                    transaction.delete(Category.class);
+//                    for (Category category : categories) {
+//                        transaction.copyToRealmOrUpdate(category);
+//                    }
+//                });
+//            }
+//
+//            return categories;
+//        }).observeOn(AndroidSchedulers.mainThread()).subscribe(categories -> {
+//                Log.d("Coffee", "Categories onNext");
+//                ArrayList<String> items2 = new ArrayList<String>();
+//                items2.add("Home");
+//                if(getContext().getClass().equals(DashboardActivity.class)) {
+//                    for (Category category : categories) {
+//                        Log.d("Coffee", category.getName());
+//                        items2.add(category.getName());
+//                    }
+//                }
+//                items2.add("Menu");
+////                mAdapter.setDataset(items2);
+////                mAdapter.notifyDataSetChanged();
+//        });
 
         return v;
     }
@@ -129,8 +136,7 @@ public class MenuTopFragment extends Fragment {
 
         @Override
         public MenuTopAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.menu_top_item, parent, false);
+            View v = LayoutInflater.from(parent.getContext()) .inflate(R.layout.menu_top_item, parent, false);
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -156,6 +162,103 @@ public class MenuTopFragment extends Fragment {
         @Override
         public int getItemCount() {
             return mDataset.size();
+        }
+    }
+
+    class MenuTopRealmAdapter extends RecyclerView.Adapter<MenuTopRealmAdapter.ViewHolder> {
+        private RealmResults<Category> items;
+        private ArrayList<String> before;
+        private ArrayList<String> after;
+
+        class ViewHolder extends RecyclerView.ViewHolder {
+            public TextView textView;
+
+            public ViewHolder(TextView v) {
+                super(v);
+                textView = v;
+            }
+        }
+
+        public MenuTopRealmAdapter() {}
+
+        public MenuTopRealmAdapter(ArrayList<String> before, RealmResults<Category> items, ArrayList<String> after) {
+            this.before = before;
+            this.items = items;
+            this.after = after;
+        }
+
+        public void setDataset(RealmResults<Category> items) {
+            this.items = items;
+        }
+
+        @Override
+        public MenuTopRealmAdapter.ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
+            View v = LayoutInflater.from(parent.getContext()) .inflate(R.layout.menu_top_item, parent, false);
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String value = ((TextView)v.findViewById(android.R.id.text1)).getText().toString();
+                    switch ( value ) {
+                        case "Home":
+                            toDashboard();
+                            break;
+                        case "Menu":
+                            toMenu();
+                            break;
+                        default:
+                            Toast.makeText(parent.getContext(), value, Toast.LENGTH_SHORT).show();
+                            break;
+                    }
+                }
+            });
+            ViewHolder vh = new ViewHolder((TextView)v);
+            return vh;
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder holder, int position) {
+            Log.d("Coffee", "onBindViewHolder - " + position);
+            String name;
+            if (position < this.getBeforeSize()) {
+                name = this.before.get(position);
+            } else if (position >= this.getAfterSize()+this.getItemsSize()) {
+                name = this.after.get(position-this.getBeforeSize()-this.getItemsSize());
+            } else  {
+                name = this.items.get(position-this.getBeforeSize()).getName();
+            }
+            holder.textView.setText(name);
+        }
+
+        @Override
+        public int getItemCount() {
+            return this.getBeforeSize() + this.getItemsSize() + this.getAfterSize();
+        }
+
+        /**
+         * Count of before elements
+         *
+         * @return int
+         */
+        private int getBeforeSize() {
+            return this.before != null ? this.before.size() : 0;
+        }
+
+        /**
+         * Count of items elements
+         *
+         * @return int
+         */
+        private int getItemsSize() {
+            return this.items != null ? this.items.size() : 0;
+        }
+
+        /**
+         * Count of after elements
+         *
+         * @return int
+         */
+        private int getAfterSize() {
+            return this.after != null ? this.after.size() : 0;
         }
     }
 

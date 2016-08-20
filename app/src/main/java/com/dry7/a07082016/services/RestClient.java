@@ -4,7 +4,6 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import com.dry7.a07082016.database.models.RealmCategory;
 import com.dry7.a07082016.models.Category;
 import com.dry7.a07082016.models.Product;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
@@ -14,9 +13,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import io.realm.RealmObject;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -30,6 +29,8 @@ import rx.schedulers.Schedulers;
 
 public class RestClient {
     private String host;
+    private Realm realm;
+
     private static Gson realmGson = new GsonBuilder().setExclusionStrategies(new ExclusionStrategy() {
         @Override
         public boolean shouldSkipField(FieldAttributes f) {
@@ -42,7 +43,9 @@ public class RestClient {
         }
     }).create();
 
-    public RestClient() {}
+    public RestClient() {
+        this.realm = Realm.getDefaultInstance();
+    }
 
     public static WebServiceInterface getInstance()
     {
@@ -59,11 +62,13 @@ public class RestClient {
         return retrofit.create(WebServiceInterface.class);
     }
 
-    public static Observable categoriesListRealm()
+    public static List<Category> categoriesListRealm()
     {
         Realm realm = Realm.getDefaultInstance();
+        List<Category> categoryArrayList = new ArrayList<Category>(realm.where(Category.class).findAll());
+//        realm.close();
 
-        return realm.where(RealmCategory.class).findAllAsync().asObservable().flatMap(persons -> { return Observable.from(persons); });
+        return categoryArrayList;
     }
 
     /**
@@ -84,9 +89,9 @@ public class RestClient {
     public static interface WebServiceInterface
     {
         @GET("products")
-        Observable<ArrayList<Product>> productsList();
+        Observable<List<Product>> productsList();
 
         @GET("categories")
-        Observable<ArrayList<Category>> categoriesList();
+        Observable<List<Category>> categoriesList();
     }
 }
