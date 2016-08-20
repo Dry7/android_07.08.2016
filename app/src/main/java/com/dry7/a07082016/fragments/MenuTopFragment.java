@@ -47,6 +47,7 @@ public class MenuTopFragment extends Fragment {
     private RecyclerView.LayoutManager mLayoutManager;
 
     private Subscription subscription;
+    private Subscription subscriptionRealm;
 
     public MenuTopFragment() {
     }
@@ -61,11 +62,16 @@ public class MenuTopFragment extends Fragment {
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getContext(), LinearLayoutManager.HORIZONTAL, false));
 
+        mAdapter = new MenuTopRealmAdapter(this.before, null, this.after);
+        mRecyclerView.setAdapter(mAdapter);
+
         if(getContext().getClass().equals(DashboardActivity.class)) {
             try (Realm realmInstance = Realm.getDefaultInstance()) {
-                realmInstance.where(Category.class).findAllAsync().asObservable().subscribe(categories -> {
-                    mAdapter = new MenuTopRealmAdapter(this.before, categories, this.after);
-                    mRecyclerView.setAdapter(mAdapter);
+                if (this.subscriptionRealm != null && this.subscriptionRealm.isUnsubscribed()) {
+                    this.subscriptionRealm.unsubscribe();
+                }
+                this.subscriptionRealm = realmInstance.where(Category.class).findAllAsync().asObservable().subscribe(categories -> {
+                    mAdapter.setItems(categories);
                     Log.d("Coffee", "Subscribe");
                 });
             }
@@ -108,6 +114,9 @@ public class MenuTopFragment extends Fragment {
     public void onDestroyView() {
         if (this.subscription != null && this.subscription.isUnsubscribed()) {
             this.subscription.unsubscribe();
+        }
+        if (this.subscriptionRealm != null && this.subscriptionRealm.isUnsubscribed()) {
+            this.subscriptionRealm.unsubscribe();
         }
         super.onDestroyView();
     }
@@ -166,8 +175,13 @@ public class MenuTopFragment extends Fragment {
     }
 
     class MenuTopRealmAdapter extends RecyclerView.Adapter<MenuTopRealmAdapter.ViewHolder> {
-        private RealmResults<Category> items;
+        /** Elements to the left of the categories */
         private ArrayList<String> before;
+
+        /** Categories */
+        private RealmResults<Category> items;
+
+        /** Elements to the right of the categories */
         private ArrayList<String> after;
 
         class ViewHolder extends RecyclerView.ViewHolder {
@@ -187,8 +201,14 @@ public class MenuTopFragment extends Fragment {
             this.after = after;
         }
 
-        public void setDataset(RealmResults<Category> items) {
+        /**
+         * Set categories
+         *
+         * @param items Categories
+         */
+        public void setItems(RealmResults<Category> items) {
             this.items = items;
+            this.notifyDataSetChanged();
         }
 
         @Override
