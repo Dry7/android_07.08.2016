@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import com.dry7.a07082016.DashboardActivity;
 import com.dry7.a07082016.MenuActivity;
 import com.dry7.a07082016.R;
-import com.dry7.a07082016.adapters.MenuTopRealmAdapter;
+import com.dry7.a07082016.adapters.MenuTopAdapter;
 import com.dry7.a07082016.models.Category;
 
 import java.util.ArrayList;
@@ -41,7 +41,7 @@ public class MenuTopFragment extends Fragment {
     RecyclerView mRecyclerView;
 
     /** RecycleView adapter */
-    private MenuTopRealmAdapter mAdapter;
+    private MenuTopAdapter mAdapter;
 
     /** Subscriptions */
     private Subscription subscriptionRealm;
@@ -59,7 +59,7 @@ public class MenuTopFragment extends Fragment {
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getContext(), LinearLayoutManager.HORIZONTAL, false));
 
-        mAdapter = new MenuTopRealmAdapter(this.before, null, this.after);
+        mAdapter = new MenuTopAdapter(this, this.before, null, this.after);
         mRecyclerView.setAdapter(mAdapter);
 
         if(getContext().getClass().equals(DashboardActivity.class)) {
@@ -73,7 +73,7 @@ public class MenuTopFragment extends Fragment {
                 });
             }
         } else {
-            mAdapter = new MenuTopRealmAdapter(this.before, null, this.after);
+            mAdapter = new MenuTopAdapter(this, this.before, null, this.after);
             mRecyclerView.setAdapter(mAdapter);
         }
 

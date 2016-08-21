@@ -8,13 +8,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dry7.a07082016.R;
+import com.dry7.a07082016.fragments.MenuTopFragment;
 import com.dry7.a07082016.models.Category;
 
 import java.util.ArrayList;
 
 import io.realm.RealmResults;
 
-public class MenuTopRealmAdapter extends RecyclerView.Adapter<MenuTopRealmAdapter.ViewHolder> {
+public class MenuTopAdapter extends RecyclerView.Adapter<MenuTopAdapter.ViewHolder> {
+    /** Menu fragment */
+    private MenuTopFragment menu;
+
     /** Elements to the left of the categories */
     private ArrayList<String> before;
 
@@ -33,12 +37,13 @@ public class MenuTopRealmAdapter extends RecyclerView.Adapter<MenuTopRealmAdapte
         }
     }
 
-    public MenuTopRealmAdapter() {}
+    public MenuTopAdapter() {}
 
-    public MenuTopRealmAdapter(ArrayList<String> before, RealmResults<Category> items, ArrayList<String> after) {
+    public MenuTopAdapter(MenuTopFragment menu, ArrayList<String> before, RealmResults<Category> items, ArrayList<String> after) {
+        this.menu   = menu;
         this.before = before;
-        this.items = items;
-        this.after = after;
+        this.items  = items;
+        this.after  = after;
     }
 
     /**
@@ -52,18 +57,18 @@ public class MenuTopRealmAdapter extends RecyclerView.Adapter<MenuTopRealmAdapte
     }
 
     @Override
-    public MenuTopRealmAdapter.ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()) .inflate(R.layout.menu_top_item, parent, false);
+    public MenuTopAdapter.ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.menu_top_item, parent, false);
         v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String value = ((TextView)v.findViewById(android.R.id.text1)).getText().toString();
                 switch ( value ) {
                     case "Home":
-//                        toDashboard();
+                        menu.toDashboard();
                         break;
                     case "Menu":
-//                        toMenu();
+                        menu.toMenu();
                         break;
                     default:
                         Toast.makeText(parent.getContext(), value, Toast.LENGTH_SHORT).show();
