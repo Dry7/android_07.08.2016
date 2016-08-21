@@ -1,6 +1,7 @@
 package com.dry7.a07082016.services;
 
 import android.content.Context;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import com.dry7.a07082016.R;
@@ -18,6 +19,10 @@ public class DatabaseService {
     private static ScheduledExecutorService scheduledExecutorService;
 
     public static void load(Context context) {
+        DatabaseService.loadCategories(context);
+    }
+
+    public static void loadCategories(Context context) {
         DatabaseService.scheduledExecutorService = Executors.newScheduledThreadPool(5);
 
         /** Load categories */
@@ -43,6 +48,6 @@ public class DatabaseService {
                     subscription.unsubscribe();
                 }
             }
-        }, 0, Integer.getInteger(context.getString(R.string.rest_categories_load_timeout)), TimeUnit.SECONDS);
+        }, 0, Integer.parseInt(context.getResources().getString(R.string.rest_categories_load_timeout)), TimeUnit.SECONDS);
     }
 }
