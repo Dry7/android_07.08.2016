@@ -2,8 +2,10 @@ package com.dry7.a07082016;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
+import com.dry7.a07082016.services.DatabaseService;
 import com.facebook.stetho.Stetho;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
@@ -34,7 +36,9 @@ public class DashboardActivity extends AppCompatActivity {
         MixpanelAPI mixpanel = MixpanelAPI.getInstance(this, getResources().getString(R.string.mixpanel_token));
         mixpanel.track("Dashboard");
 
+        Log.d("Coffee", getString(R.string.rest_categories_load_timeout));
 
+        DatabaseService.load(this);
 //            List<Category> categories = RestClient.categoriesListRealm();
 //            for (Category category : categories) {
 //                Log.d("Coffee1123", category.getName());

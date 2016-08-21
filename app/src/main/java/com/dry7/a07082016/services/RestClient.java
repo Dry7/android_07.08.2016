@@ -54,7 +54,7 @@ public class RestClient {
                 .addNetworkInterceptor(new StethoInterceptor())
                 .build();
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://api.gifts48.ru/")
+                .baseUrl("http://api.gifts48.ru")
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create(RestClient.realmGson))
                 .addCallAdapterFactory(rxAdapter).build();
