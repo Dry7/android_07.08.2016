@@ -18,10 +18,17 @@ public class DashboardActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        /** Start Crashlytics */
         Fabric.with(this, new Crashlytics());
+
+        /** Start Realm */
         RealmConfiguration config = new RealmConfiguration.Builder(this).deleteRealmIfMigrationNeeded().build();
         Realm.setDefaultConfiguration(config);
+
         setContentView(R.layout.dashboard);
+
+        /** Start Stetho debug */
         if (BuildConfig.DEBUG) {
             Stetho.initialize(
                     Stetho.newInitializerBuilder(this)
@@ -35,21 +42,7 @@ public class DashboardActivity extends AppCompatActivity {
         MixpanelAPI mixpanel = MixpanelAPI.getInstance(this, getResources().getString(R.string.mixpanel_token));
         mixpanel.track("Dashboard");
 
+        /** Load data from server */
         DatabaseService.load(this);
-//            List<Category> categories = RestClient.categoriesListRealm();
-//            for (Category category : categories) {
-//                Log.d("Coffee1123", category.getName());
-//            }
-
-//        Realm realm = Realm.getDefaultInstance();
-//
-//        realm.beginTransaction();
-//
-//        RealmCategory categoryRealm = realm.createObject(RealmCategory.class);
-//        categoryRealm.setName("Coffee");
-//
-//        realm.commitTransaction();
-//
-//        realm.close();
     }
 }
