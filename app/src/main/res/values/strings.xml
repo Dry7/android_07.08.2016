@@ -7,4 +7,5 @@
     <string name="logo">Coffeecup New York</string>
 
     <string name="rest_categories_load_timeout">600</string>
+    <string name="rest_products_load_timeout">600</string>
 </resources>

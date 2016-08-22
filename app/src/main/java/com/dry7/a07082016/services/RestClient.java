@@ -12,7 +12,6 @@ import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
@@ -60,15 +59,6 @@ public class RestClient {
                 .addCallAdapterFactory(rxAdapter).build();
 
         return retrofit.create(WebServiceInterface.class);
-    }
-
-    public static List<Category> categoriesListRealm()
-    {
-        Realm realm = Realm.getDefaultInstance();
-        List<Category> categoryArrayList = new ArrayList<Category>(realm.where(Category.class).findAll());
-//        realm.close();
-
-        return categoryArrayList;
     }
 
     /**
