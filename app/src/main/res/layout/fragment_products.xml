@@ -1,12 +1,21 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.ProductsFragment">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Products" />
+    <data>
+        <variable
+            name="viewModel"
+            type="com.dry7.a07082016.viewmodels.ProductsViewModel" />
+    </data>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/productsList"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:clickable="true"
+        android:focusable="true"
+        android:textAlignment="viewEnd"
+        bind:recyclerViewViewModel="@{viewModel}"
+        />
 
-</FrameLayout>
+</layout>

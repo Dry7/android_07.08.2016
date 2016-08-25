@@ -7,17 +7,18 @@ import io.realm.annotations.RealmClass;
 /**
  * Product model
  */
+@org.parceler.Parcel(analyze = {Product.class})
 @RealmClass
 public class Product implements RealmModel
 {
     @PrimaryKey
-    private Integer id;
+    public Integer id;
 
-    private String name;
+    public String name;
 
-    private String category;
+    public String category;
 
-    private Double price;
+    public Double price;
 
     public Integer getId() {
         return id;
@@ -48,6 +49,15 @@ public class Product implements RealmModel
     }
 
     public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    public Product() {}
+
+    public Product(Integer id, String name, String category, Double price) {
+        this.id = id;
+        this.name = name;
+        this.category = category;
         this.price = price;
     }
 }
