@@ -5,6 +5,7 @@ import android.os.Parcel;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 import com.dry7.a07082016.adapters.ProductsAdapter;
 import com.dry7.a07082016.models.Product;
@@ -12,9 +13,12 @@ import com.dry7.a07082016.mvvp.RecyclerViewViewModel;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
+import rx.Subscription;
 
 public class ProductsViewModel extends RecyclerViewViewModel {
     private final Context context;
+
+    private Subscription subscriptionRealm;
 
     ProductsAdapter adapter;
 
@@ -23,16 +27,17 @@ public class ProductsViewModel extends RecyclerViewViewModel {
 
         this.context = context.getApplicationContext();
 
-        RealmResults<Product> products;
-
-        if (savedInstanceState instanceof ProductsState) {
-   //         products = ((ProductsState)savedInstanceState).products;
-        } else {
-        }
-        products = getProducts();
-
         adapter = new ProductsAdapter();
-        adapter.setItems(products);
+
+        try (Realm realmInstance = Realm.getDefaultInstance()) {
+            if (this.subscriptionRealm != null && this.subscriptionRealm.isUnsubscribed()) {
+                this.subscriptionRealm.unsubscribe();
+            }
+            this.subscriptionRealm = realmInstance.where(Product.class).findAllSortedAsync("price").asObservable().subscribe(products -> {
+                adapter.setItems(products);
+                Log.d("Coffee", "subscriptionRealm - " + products.size());
+            });
+        }
     }
 
     @Override
@@ -50,9 +55,11 @@ public class ProductsViewModel extends RecyclerViewViewModel {
         return new ProductsState(this);
     }
 
-    private RealmResults<Product> getProducts() {
-        try (Realm realmInstance = Realm.getDefaultInstance()) {
-            return realmInstance.where(Product.class).findAllSortedAsync("price");
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (this.subscriptionRealm != null && this.subscriptionRealm.isUnsubscribed()) {
+            this.subscriptionRealm.unsubscribe();
         }
     }
 

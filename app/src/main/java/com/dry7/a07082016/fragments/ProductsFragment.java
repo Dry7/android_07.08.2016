@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,12 +14,16 @@ import android.view.ViewGroup;
 import com.dry7.a07082016.R;
 import com.dry7.a07082016.adapters.ProductsAdapter;
 import com.dry7.a07082016.databinding.FragmentProductsBinding;
+import com.dry7.a07082016.models.Category;
+import com.dry7.a07082016.models.Product;
 import com.dry7.a07082016.mvvp.ViewModel;
 import com.dry7.a07082016.mvvp.ViewModelFragment;
 import com.dry7.a07082016.viewmodels.ProductsViewModel;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.Realm;
+import io.realm.RealmResults;
 import rx.Subscription;
 
 
@@ -46,7 +52,6 @@ public class ProductsFragment extends ViewModelFragment {
         View view = inflater.inflate(R.layout.fragment_products, container, false);
         ButterKnife.bind(this, view);
 
-
         FragmentProductsBinding binding = FragmentProductsBinding.bind(view);
         binding.setViewModel(viewModel);
 
@@ -62,8 +67,8 @@ public class ProductsFragment extends ViewModelFragment {
 //                this.subscriptionRealm.unsubscribe();
 //            }
 //            this.subscriptionRealm = realmInstance.where(Product.class).findAllSortedAsync("price").asObservable().subscribe(products -> {
-//                adapter.setItems(products);
-//                Log.d("Coffee", "Subscribe");
+////                adapter.setItems(products);
+//                Log.d("Coffee", "subscriptionRealm - " + products.size());
 //            });
 //        }
 

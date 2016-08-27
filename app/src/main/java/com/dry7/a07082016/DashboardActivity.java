@@ -2,12 +2,15 @@ package com.dry7.a07082016;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
+import com.dry7.a07082016.models.Product;
 import com.dry7.a07082016.mvvp.ViewModel;
 import com.dry7.a07082016.mvvp.ViewModelActivity;
 import com.dry7.a07082016.services.DatabaseService;
 import com.dry7.a07082016.viewmodels.DashboardViewModel;
+import com.dry7.a07082016.viewmodels.ProductsViewModel;
 import com.facebook.stetho.Stetho;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
@@ -15,6 +18,7 @@ import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 import io.fabric.sdk.android.Fabric;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import io.realm.RealmResults;
 
 public class DashboardActivity extends ViewModelActivity {
 

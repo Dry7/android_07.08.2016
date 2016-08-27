@@ -1,6 +1,7 @@
 package com.dry7.a07082016.adapters;
 
 import android.databinding.ViewDataBinding;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,7 @@ public class ProductsAdapter extends RecyclerViewAdapter<Product, ProductViewMod
 
         public ViewHolder(View itemView, ViewDataBinding binding, ProductViewModel viewModel) {
             super(itemView, binding, viewModel);
+            Log.d("Coffee", "ViewHolder");
             ButterKnife.bind(this, itemView);
         }
     }
@@ -49,6 +51,7 @@ public class ProductsAdapter extends RecyclerViewAdapter<Product, ProductViewMod
      */
     public void setItems(RealmResults<Product> items) {
         this.items = items;
+        Log.d("Coffee", "setItems - " + this.items.size());
         this.notifyDataSetChanged();
     }
 
@@ -66,6 +69,7 @@ public class ProductsAdapter extends RecyclerViewAdapter<Product, ProductViewMod
 //                Toast.makeText(parent.getContext(), value, Toast.LENGTH_SHORT).show();
 //            }
 //        });
+        Log.d("Coffee", "onCreateViewHolder");
         ProductViewModel viewModel = new ProductViewModel();
         ProductItemBinding binding = ProductItemBinding.bind(itemView);
         binding.setProduct(viewModel);
