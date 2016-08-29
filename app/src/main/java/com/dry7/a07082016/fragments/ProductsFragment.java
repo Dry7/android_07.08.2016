@@ -4,6 +4,7 @@ package com.dry7.a07082016.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
@@ -55,9 +56,9 @@ public class ProductsFragment extends ViewModelFragment {
         FragmentProductsBinding binding = FragmentProductsBinding.bind(view);
         binding.setViewModel(viewModel);
 
-//        productsList.setHasFixedSize(true);
-//
-//        productsList.setLayoutManager(new GridLayoutManager(this.getContext(), 3));
+        productsList.setHasFixedSize(true);
+
+        productsList.setLayoutManager(new GridLayoutManager(this.getContext(), 3));
 //
 //        adapter = new ProductsAdapter(this);
 //        productsList.setAdapter(adapter);

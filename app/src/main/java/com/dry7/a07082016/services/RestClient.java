@@ -64,7 +64,7 @@ public class RestClient {
     /**
      * Connection status
      *
-     * @param context
+     * @param context Context
      *
      * @return bool
      */

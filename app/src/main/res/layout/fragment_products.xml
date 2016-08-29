@@ -12,9 +12,12 @@
         android:id="@+id/productsList"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:background="@color/cardview_dark_background"
         android:clickable="true"
         android:focusable="true"
         android:textAlignment="viewEnd"
+        android:padding="16dp"
+        android:paddingEnd="0dp"
         bind:recyclerViewViewModel="@{viewModel}"
         />
 

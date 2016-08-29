@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 public abstract class RecyclerViewViewModel extends ViewModel {
     RecyclerView.LayoutManager layoutManager;
@@ -32,6 +33,7 @@ public abstract class RecyclerViewViewModel extends ViewModel {
             savedLayoutManagerState = null;
         }
 
+        Log.d("Coffee", "RecyclerViewViewModel.setupRecyclerView - " + getAdapter().getItemCount());
         recyclerView.setAdapter(getAdapter());
         recyclerView.setLayoutManager(layoutManager);
     }
