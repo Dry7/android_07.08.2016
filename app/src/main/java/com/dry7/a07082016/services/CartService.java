@@ -7,9 +7,6 @@ import com.dry7.a07082016.models.Product;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by dry7 on 29.08.16.
- */
 public class CartService {
     private static HashMap<Product, Integer> products = new HashMap<Product, Integer>();
 

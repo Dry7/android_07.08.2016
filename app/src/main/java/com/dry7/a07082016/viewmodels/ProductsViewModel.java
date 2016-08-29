@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
 import com.dry7.a07082016.adapters.ProductsAdapter;
+import com.dry7.a07082016.models.Category;
 import com.dry7.a07082016.models.Product;
 import com.dry7.a07082016.mvvp.RecyclerViewViewModel;
 
@@ -17,6 +18,7 @@ import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmList;
+import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import rx.Subscription;
 
@@ -36,18 +38,25 @@ public class ProductsViewModel extends RecyclerViewViewModel {
 
         adapter = new ProductsAdapter();
         Log.d("Coffee", "ProductsViewModel.construct - " + adapter.getItemCount());
+        setItems(null);
+    }
+
+    private void setItems(String category) {
         try (Realm realmInstance = Realm.getDefaultInstance()) {
             if (this.subscriptionRealm != null && this.subscriptionRealm.isUnsubscribed()) {
                 this.subscriptionRealm.unsubscribe();
             }
-            this.subscriptionRealm = realmInstance.where(Product.class).findAllSortedAsync("price").asObservable().subscribe(products -> {
+            RealmQuery<Product> query = realmInstance.where(Product.class);
+            if ((category != null) && (!category.equals(""))) {
+                query.equalTo("category", category);
+            }
+            this.subscriptionRealm = query.findAllSortedAsync("price").asObservable().subscribe(products -> {
 
                 RealmList<Product> newProducts = new RealmList<Product>();
                 if (products != null) {
                     newProducts.addAll(products);
                 }
                 adapter.setItems(newProducts);
-//                Log.d("Coffee", "subscriptionRealm - " + products.size());
             });
         }
     }
@@ -71,6 +80,10 @@ public class ProductsViewModel extends RecyclerViewViewModel {
         products.add(new Product(3, "3", "3", 3.0));
 
         return products;
+    }
+
+    public void setCategory(String string) {
+        setItems(string);
     }
 
     @Override

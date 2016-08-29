@@ -3,6 +3,7 @@ package com.dry7.a07082016.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringDef;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.dry7.a07082016.MenuActivity;
 import com.dry7.a07082016.R;
 import com.dry7.a07082016.adapters.ProductsAdapter;
 import com.dry7.a07082016.databinding.FragmentProductsBinding;
@@ -26,6 +28,9 @@ import butterknife.ButterKnife;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import rx.Subscription;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 
 /**
@@ -52,6 +57,7 @@ public class ProductsFragment extends ViewModelFragment {
 
         View view = inflater.inflate(R.layout.fragment_products, container, false);
         ButterKnife.bind(this, view);
+        EventBus.getDefault().register(this);
 
         FragmentProductsBinding binding = FragmentProductsBinding.bind(view);
         binding.setViewModel(viewModel);
@@ -81,5 +87,19 @@ public class ProductsFragment extends ViewModelFragment {
     protected ViewModel createViewModel(@Nullable ViewModel.State savedViewModelState) {
         viewModel = new ProductsViewModel(getContext(), savedViewModelState);
         return viewModel;
+    }
+
+    public static class SetCategoryEvent {
+        public final String category;
+
+        public SetCategoryEvent(String category) {
+            this.category = category;
+        }
+    }
+
+    @Subscribe
+    public void setCategory(SetCategoryEvent event) {
+        Log.d("Coffee", "setCategory - " + event.category);
+        viewModel.setCategory(event.category);
     }
 }

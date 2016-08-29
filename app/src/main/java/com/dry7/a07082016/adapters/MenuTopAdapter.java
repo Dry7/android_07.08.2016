@@ -1,15 +1,20 @@
 package com.dry7.a07082016.adapters;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dry7.a07082016.MenuActivity;
 import com.dry7.a07082016.R;
 import com.dry7.a07082016.fragments.MenuTopFragment;
+import com.dry7.a07082016.fragments.ProductsFragment;
 import com.dry7.a07082016.models.Category;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 
@@ -62,15 +67,18 @@ public class MenuTopAdapter extends RecyclerView.Adapter<MenuTopAdapter.ViewHold
         v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("Coffee", "Click");
                 String value = ((TextView)v.findViewById(android.R.id.text1)).getText().toString();
                 switch ( value ) {
                     case "Home":
                         menu.toDashboard();
+                        EventBus.getDefault().post(new ProductsFragment.SetCategoryEvent(""));
                         break;
                     case "Menu":
                         menu.toMenu();
                         break;
                     default:
+                        EventBus.getDefault().post(new ProductsFragment.SetCategoryEvent(value));
                         Toast.makeText(parent.getContext(), value, Toast.LENGTH_SHORT).show();
                         break;
                 }
