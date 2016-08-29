@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.dry7.a07082016.models.Product;
 import com.dry7.a07082016.mvvp.ItemViewModel;
+import com.dry7.a07082016.services.CartService;
 import com.google.android.gms.common.api.BooleanResult;
 
 public class ProductViewModel extends ItemViewModel<Product> {
@@ -42,11 +43,12 @@ public class ProductViewModel extends ItemViewModel<Product> {
     }
 
     public Boolean getSelected() {
-        return false;
+        return CartService.inCart(this.item);
     }
 
     public boolean add2Cart() {
         Log.d("Coffee", "add2Cart - " + this.getName());
+        CartService.add(this.item);
         notifyChange();
         return true;
     }
