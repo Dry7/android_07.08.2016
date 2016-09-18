@@ -18,11 +18,14 @@ import com.dry7.a07082016.adapters.MenuTopAdapter;
 import com.dry7.a07082016.models.Category;
 
 import java.util.ArrayList;
+import java.util.Observable;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.realm.Realm;
+import rx.Observer;
+import rx.Subscriber;
 import rx.Subscription;
 
 

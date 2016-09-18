@@ -19,6 +19,9 @@ import io.fabric.sdk.android.Fabric;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
+import rx.Observable;
+import rx.Observer;
+import rx.Subscriber;
 
 public class DashboardActivity extends ViewModelActivity {
 
@@ -53,6 +56,19 @@ public class DashboardActivity extends ViewModelActivity {
 
         /** Load data from server */
         DatabaseService.load(this);
+
+
+        Subscriber<? super String> sub2;
+        Observable<String> myObservable = Observable.create(sub -> {
+                        // "Emit" any data to the subscriber
+                        sub.onNext("a");
+                        sub.onNext("b");
+                        sub.onNext("c");
+                        // Trigger the completion of the event
+//                        sub.onCompleted();
+                    });
+
+        myObservable.subscribe(el -> Log.d("rxJava", el));
     }
 
     @Nullable
