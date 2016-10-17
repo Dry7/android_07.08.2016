@@ -7,6 +7,9 @@
         <variable
             name="product"
             type="com.dry7.a07082016.models.Product" />
+        <variable
+            name="viewModel"
+            type="com.dry7.a07082016.viewmodels.CartListViewModel" />
     </data>
     <LinearLayout
         android:orientation="vertical">
@@ -24,6 +27,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text='@{product.price.toString() + " $"}' />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/cartList"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="@color/cardview_dark_background"
+            android:clickable="true"
+            android:focusable="true"
+            android:textAlignment="viewEnd"
+            android:padding="16dp"
+            android:paddingEnd="0dp"
+            />
 
     </LinearLayout>
 </layout>
